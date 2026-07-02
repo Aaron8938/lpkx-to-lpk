@@ -28,10 +28,10 @@
 ```
 lpkx to lpk/
 ├── lpkx转lpk工具.bat        # 主启动器（双击运行 / 拖入文件）
-├── run_launcher.py           # Python 启动器（备用，编码更可靠）
-├── lpkx_to_lpk_extract.py    # Pro 端：解包 lpkx → CIM JSON → webmap JSON
-├── lpkx_to_lpk_build.py      # ArcMap 端：webmap JSON → MXD → lyr → lpk
-└── 使用说明.md               # 详细使用说明（中文）
+├── README.md                 # 项目说明与使用文档
+└── scripts/
+    ├── lpkx_to_lpk_extract.py    # Pro 端：解包 lpkx → CIM JSON → webmap JSON
+    └── lpkx_to_lpk_build.py      # ArcMap 端：webmap JSON → MXD → lyr → lpk
 ```
 
 ## 使用方法
@@ -48,13 +48,18 @@ lpkx to lpk/
 2. 拖到 `lpkx转lpk工具.bat` 上
 3. 自动批量处理
 
-### 方式三：Python 启动器
+### 方式三：命令行调用
 
 ```bash
-D:\arcpy_env\python.exe run_launcher.py "文件路径.lpkx"
+"E:\Automation\lpkx to lpk\lpkx转lpk工具.bat" "文件路径.lpkx"
 ```
 
-支持多个文件和文件夹参数。
+或直接调用两个 Python 脚本：
+
+```bash
+"D:\arcpy_env\python.exe" "scripts\lpkx_to_lpk_extract.py" "文件路径.lpkx" "mid.json"
+"C:\Python27\ArcGIS10.8\python.exe" "scripts\lpkx_to_lpk_build.py" "mid.json" "文件路径.lpk"
+```
 
 ## 技术原理
 

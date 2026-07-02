@@ -13,8 +13,8 @@ rem ---- ≈‰÷√«¯ ----
 set "PRO_PYTHON=D:\arcpy_env\python.exe"
 set "ARCMAP_PYTHON=C:\Python27\ArcGIS10.8\python.exe"
 set "SCRIPT_DIR=%~dp0"
-set "EXTRACT_SCRIPT=%SCRIPT_DIR%lpkx_to_lpk_extract.py"
-set "BUILD_SCRIPT=%SCRIPT_DIR%lpkx_to_lpk_build.py"
+set "EXTRACT_SCRIPT=%SCRIPT_DIR%scripts\lpkx_to_lpk_extract.py"
+set "BUILD_SCRIPT=%SCRIPT_DIR%scripts\lpkx_to_lpk_build.py"
 set "TEMP_DIR=%TEMP%\lpkx_to_lpk"
 set "PYTHONIOENCODING=gbk"
 
