@@ -2,13 +2,19 @@
 
 将 ArcGIS Pro 的 `.lpkx` 图层包转换为 ArcMap 的 `.lpk` 图层包，尽可能保留原始符号化样式。
 
-## 功能
+## 当前版本 (v0.1.0)
 
-- 自动解包 `.lpkx`，提取图层定义和符号信息
-- 将 CIM 符号模型转换为 webmap JSON（ArcMap 可识别格式）
-- 支持三种渲染器：SimpleRenderer、UniqueValueRenderer、ClassBreaksRenderer
-- HatchFill（网格填充）智能映射到 ArcMap 标准填充样式
-- 批量处理多个 `.lpkx` 文件或文件夹
+**仅支持单一符号（SimpleRenderer）转换。**
+
+- [x] SimpleRenderer — 自动解包 `.lpkx`，提取并转换符号样式
+- [x] HatchFill（网格填充）→ ArcMap 标准填充样式 / 半透明实心降级
+- [x] 批量处理多个 `.lpkx` 文件或文件夹
+
+### 计划支持
+
+- [ ] UniqueValueRenderer（唯一值，按字段分不同符号）
+- [ ] ClassBreaksRenderer（分级色彩）
+- [ ] GraduatedSymbolsRenderer（分级符号）
 
 ## 环境要求
 
@@ -69,15 +75,15 @@ D:\arcpy_env\python.exe run_launcher.py "文件路径.lpkx"
 
 ## 样式保真度
 
-### 完全支持
+### v0.1.0（当前版本）
 
-| 渲染器 | 保真度 |
-|--------|--------|
-| SimpleRenderer（单一符号） | ★★★ 高 |
-| UniqueValueRenderer（唯一值） | ★★★ 高 |
-| GraduatedColorsRenderer（分级色彩） | ★★★ 高 |
+| 渲染器 | 状态 |
+|--------|------|
+| SimpleRenderer（单一符号） | ✅ 完全支持 |
+| UniqueValueRenderer（唯一值，按字段分符号） | 🔜 计划中 |
+| ClassBreaksRenderer（分级色彩） | 🔜 计划中 |
 
-### 降级处理
+### 降级处理（v0.1.0 已支持）
 
 | 符号类型 | 处理方式 |
 |----------|----------|
