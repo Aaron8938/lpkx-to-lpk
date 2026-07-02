@@ -4,17 +4,16 @@
 
 ## 当前版本 (v0.1.0)
 
-**仅支持单一符号（SimpleRenderer）转换。**
-
-- [x] SimpleRenderer — 自动解包 `.lpkx`，提取并转换符号样式
+- [x] SimpleRenderer（单一符号）— 已支持并测试
+- [x] UniqueValueRenderer（唯一值，按字段分不同符号）— 已支持并测试
 - [x] HatchFill（网格填充）→ ArcMap 标准填充样式 / 半透明实心降级
+- [x] 数据源支持 File GDB 与 Shapefile
 - [x] 批量处理多个 `.lpkx` 文件或文件夹
 
-### 计划支持
+### 计划支持 / 待验证
 
-- [ ] UniqueValueRenderer（唯一值，按字段分不同符号）
-- [ ] ClassBreaksRenderer（分级色彩）
-- [ ] GraduatedSymbolsRenderer（分级符号）
+- [ ] ClassBreaksRenderer（分级色彩）— 代码已实现，待真实样本验证
+- [ ] GraduatedSymbolsRenderer（分级符号）— 计划中
 
 ## 环境要求
 
@@ -40,7 +39,7 @@ lpkx to lpk/
 ### 方式一：双击 bat（推荐）
 
 1. 双击 `lpkx转lpk工具.bat`
-2. 输入或拖入 `.lpkx` 文件路径
+2. 拖入 `.lpkx` 文件路径（或文件夹）
 3. 等待处理完成，`.lpk` 输出到同目录
 
 ### 方式二：拖入文件到 bat
@@ -79,15 +78,16 @@ D:\arcpy_env\python.exe run_launcher.py "文件路径.lpkx"
 
 | 渲染器 | 状态 |
 |--------|------|
-| SimpleRenderer（单一符号） | ✅ 完全支持 |
-| UniqueValueRenderer（唯一值，按字段分符号） | 🔜 计划中 |
-| ClassBreaksRenderer（分级色彩） | 🔜 计划中 |
+| SimpleRenderer（单一符号） | ✅ 已支持并测试 |
+| UniqueValueRenderer（唯一值，按字段分符号） | ✅ 已支持并测试 |
+| ClassBreaksRenderer（分级色彩） | ⚠️ 代码已实现，待真实样本验证 |
+| GraduatedSymbolsRenderer（分级符号） | 🔜 计划中 |
 
 ### 降级处理（v0.1.0 已支持）
 
 | 符号类型 | 处理方式 |
 |----------|----------|
-| HatchFill（网格填充） | 映射到标准填充样式 / 降级为半透明实心 |
+| HatchFill（网格填充）| 按角度映射到 ArcMap 标准填充样式；无法精确映射时降级为半透明实心 |
 | PictureFill（图片填充） | 转为灰色实心 |
 | CharacterMarker（字符标记） | 简化为圆形点 |
 
@@ -102,7 +102,7 @@ D:\arcpy_env\python.exe run_launcher.py "文件路径.lpkx"
 - 两个 Python 环境必须可用
 - 处理中会在 `%TEMP%\lpkx_to_lpk` 创建临时文件
 - 同名 `.lpk` 会被覆盖
-- ArcMap 端输出可能出现部分乱码（Python 2.7 编码限制），不影响功能
+- 已针对 Windows 控制台 GBK 代码页做中文输出适配，正常双击运行不应出现乱码
 
 ## License
 

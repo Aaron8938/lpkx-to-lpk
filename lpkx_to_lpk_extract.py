@@ -388,7 +388,16 @@ def cim_renderer_to_webmap(cim_renderer, geom_type, warnings):
                     continue
                 # 取第一个值
                 v = values[0]
-                val = v.get("value", "") if isinstance(v, dict) else str(v)
+                if isinstance(v, dict):
+                    # Pro lyrx 中 CIMUniqueValue 通常用 fieldValues 数组存放字段值
+                    if "value" in v:
+                        val = v["value"]
+                    elif "fieldValues" in v and v["fieldValues"]:
+                        val = v["fieldValues"][0]
+                    else:
+                        val = ""
+                else:
+                    val = str(v)
                 symbol = cim_symbol_to_webmap(uv.get("symbol"), geom_type, warnings)
                 if symbol:
                     infos.append({
@@ -529,40 +538,52 @@ def extract_lpkx(lpkx_path, output_json_path):
 
     # 解析数据源绝对路径
     # workspaceConnectionString 格式: DATABASE=..\commondata\凯尔仕.gdb
-    gdb_relative = ""
+    db_relative = ""
     if "DATABASE=" in workspace_conn_str:
-        gdb_relative = workspace_conn_str.split("DATABASE=", 1)[1].strip()
+        db_relative = workspace_conn_str.split("DATABASE=", 1)[1].strip()
 
     # lyrx 所在目录
     lyrx_dir = os.path.dirname(lyrx_path)
     # 相对路径基于 lyrx 所在目录解析
-    if gdb_relative:
-        gdb_abs = os.path.normpath(os.path.join(lyrx_dir, gdb_relative))
+    workspace_abs = None
+    if db_relative:
+        workspace_abs = os.path.normpath(os.path.join(lyrx_dir, db_relative))
     else:
-        # 遍历找 .gdb
-        gdb_abs = None
+        # 遍历找 .gdb 或 shapefile 所在文件夹
         for root, dirs, files in os.walk(extract_dir):
             for d in dirs:
                 if d.lower().endswith(".gdb"):
-                    gdb_abs = os.path.join(root, d)
+                    workspace_abs = os.path.join(root, d)
                     break
-            if gdb_abs:
+            if workspace_abs:
                 break
 
-    if not gdb_abs or not os.path.exists(gdb_abs):
-        raise RuntimeError(u"未找到数据源 GDB: %s" % gdb_relative)
+    if not workspace_abs:
+        raise RuntimeError(u"未找到数据源工作空间: %s" % workspace_conn_str)
 
     # 转换为长路径名（避免 ADMINI~1 短路径在 ArcMap 端出问题）
     try:
         import ctypes
         buf = ctypes.create_unicode_buffer(260)
         GetLongPathName = ctypes.windll.kernel32.GetLongPathNameW
-        if GetLongPathName(gdb_abs, buf, 260):
-            gdb_abs = buf.value
+        if GetLongPathName(workspace_abs, buf, 260):
+            workspace_abs = buf.value
     except Exception:
         pass
 
-    data_source = os.path.join(gdb_abs, dataset_name)
+    # 区分 GDB 与 Shapefile
+    is_shapefile = (ws_factory == "Shapefile")
+    if is_shapefile:
+        # Shapefile: workspace 是文件夹，dataset 是 .shp 主文件名
+        shp_path = os.path.join(workspace_abs, dataset_name + ".shp")
+        if not os.path.exists(shp_path):
+            raise RuntimeError(u"未找到 Shapefile 数据源: %s" % shp_path)
+        data_source = shp_path
+    else:
+        # FileGDB
+        if not os.path.exists(workspace_abs):
+            raise RuntimeError(u"未找到数据源 GDB: %s" % workspace_abs)
+        data_source = os.path.join(workspace_abs, dataset_name)
 
     # 获取几何类型
     desc = arcpy.Describe(data_source)
@@ -611,7 +632,7 @@ def extract_lpkx(lpkx_path, output_json_path):
     output = {
         "layer_name": layer_name,
         "data_source": data_source,
-        "workspace_path": gdb_abs,
+        "workspace_path": workspace_abs,
         "dataset_name": dataset_name,
         "geometry_type": geom_type,
         "renderer_type": renderer_type,

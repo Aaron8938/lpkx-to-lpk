@@ -65,7 +65,7 @@ goto parse_args
 
 :interactive_mode
 set "input="
-set /p "input=请输入或拖入 .lpkx 文件路径: "
+set /p "input=请拖入lpkx文件:"
 rem 去除可能的引号
 set "input=!input:"=!"
 if "!input!"=="" (
@@ -212,6 +212,6 @@ echo.
 type "%REPORT%"
 
 echo.
-echo 按任意键退出...
+set /p "=按任意键退出..." <nul
 pause >nul
 endlocal
